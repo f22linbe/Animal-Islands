@@ -1,5 +1,7 @@
 package com.example.animalislands;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 public class Island {
@@ -14,4 +16,12 @@ public class Island {
     private int squarekm;
 
     private Auxdata Auxdata;
+
+    public String getName() {
+        return name;
+    }
+    @NonNull
+    public String toString() {
+        return name + " " + location;
+    }
 }

@@ -21,7 +21,7 @@ public class JsonTask extends AsyncTask<String, String, String> {
     private final JsonTaskListener listener;
 
     @SuppressWarnings("deprecation")
-    public JsonTask(JsonTaskListener listener) {
+    public JsonTask(JsonTaskListener listener, MainActivity mainActivity) {
         this.listener = listener;
     }
 
