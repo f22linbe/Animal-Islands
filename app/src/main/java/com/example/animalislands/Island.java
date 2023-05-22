@@ -15,13 +15,17 @@ public class Island {
     @SerializedName("size")
     private int squarekm;
 
-    private Auxdata Auxdata;
+    private Auxdata auxdata;
 
-    public String getName() {
-        return name;
+    public Auxdata getAuxdata() {
+        return auxdata;
+    }
+
+    public String getDetails() {
+        return "ID: " + id + "\nPart of: " + category + "\nSize: " + squarekm + "km²" + "\nPopulation: " + auxdata.getPopulation();
     }
     @NonNull
     public String toString() {
-        return name + " " + location;
+        return name + ", " + location;
     }
 }

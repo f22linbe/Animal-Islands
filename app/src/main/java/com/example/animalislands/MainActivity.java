@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -26,13 +27,10 @@ public class MainActivity extends AppCompatActivity implements JsonTask.JsonTask
 
         Button aboutButton = findViewById(R.id.about_button);
 
-        aboutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AboutActivity.class);
-                intent.putExtra("title", "About app");
-                startActivity(intent);
-            }
+        aboutButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+            intent.putExtra("title", "About app");
+            startActivity(intent);
         });
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -64,7 +62,8 @@ public class MainActivity extends AppCompatActivity implements JsonTask.JsonTask
         ArrayList<RecyclerViewItem> items = new ArrayList<>();
 
         for (Island island : islands) {
-            items.add(new RecyclerViewItem(island.getName()));
+
+            items.add(new RecyclerViewItem(island.getDetails()));
         }
 
         RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items, item -> Toast.makeText(MainActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show());
