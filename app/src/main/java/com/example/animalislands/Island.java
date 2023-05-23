@@ -21,7 +21,7 @@ public class Island {
         return auxdata;
     }
 
-    public String getDetails() {
+    public String getInfo() {
         return "ID: " + id + "\nPart of: " + category + "\nSize: " + squarekm + "km²" + "\nPopulation: " + auxdata.getPopulation();
     }
     @NonNull

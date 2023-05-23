@@ -8,8 +8,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -36,16 +34,6 @@ public class MainActivity extends AppCompatActivity implements JsonTask.JsonTask
         setSupportActionBar(toolbar);
         // Recycler widget
 
-        ArrayList<RecyclerViewItem> items = new ArrayList<>(Arrays.asList(
-                new RecyclerViewItem("Matterhorn"),
-                new RecyclerViewItem("Mont Blanc"),
-                new RecyclerViewItem("Denali")
-        ));
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items, item -> Toast.makeText(MainActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show());
-
-        RecyclerView view = findViewById(R.id.recycler_view);
-        view.setLayoutManager(new LinearLayoutManager(this));
-        view.setAdapter(adapter);
 
 
         String JSON_URL = "https://mobprog.webug.se/json-api?login=f22linbe";
@@ -58,15 +46,18 @@ public class MainActivity extends AppCompatActivity implements JsonTask.JsonTask
     public void onPostExecute(String json) {
         Gson gson = new Gson();
         Island[] islands = gson.fromJson(json, Island[].class);
-
+        ArrayList<String> detailedItems = new ArrayList<>();
         ArrayList<RecyclerViewItem> items = new ArrayList<>();
-
         for (Island island : islands) {
-
-            items.add(new RecyclerViewItem(island.getDetails()));
+            items.add(new RecyclerViewItem(island.toString()));
+            detailedItems.add(island.getInfo());
         }
 
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items, item -> Toast.makeText(MainActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show());
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items, detailedItems, item -> {
+            Intent intent = new Intent(MainActivity.this, DetailedActivity.class);
+            intent.putExtra("itemString", item);
+            startActivity(intent);
+        });
 
         RecyclerView view = findViewById(R.id.recycler_view);
         view.setLayoutManager(new LinearLayoutManager(this));

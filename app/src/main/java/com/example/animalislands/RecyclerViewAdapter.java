@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -13,12 +14,14 @@ import androidx.recyclerview.widget.RecyclerView;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
     private final List<RecyclerViewItem> items;
+    private final ArrayList<String> detailedItems;
     private final LayoutInflater layoutInflater;
     private final OnClickListener onClickListener;
 
-    RecyclerViewAdapter(Context context, List<RecyclerViewItem> items, OnClickListener onClickListener) {
+    RecyclerViewAdapter(Context context, List<RecyclerViewItem> items, ArrayList<String> detailedItems, OnClickListener onClickListener) {
         this.layoutInflater = LayoutInflater.from(context);
         this.items = items;
+        this.detailedItems = detailedItems;
         this.onClickListener = onClickListener;
     }
 
@@ -52,11 +55,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         @Override
         public void onClick(View view) {
-            onClickListener.onClick(items.get(getAdapterPosition()));
+            onClickListener.onClick(detailedItems.get(getAdapterPosition()));
         }
     }
 
     public interface OnClickListener {
-        void onClick(RecyclerViewItem item);
+        void onClick(String item);
     }
 }
