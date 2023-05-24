@@ -1,76 +1,103 @@
 package com.example.animalislands;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
-
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.Toast;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import com.google.gson.Gson;
 
-import com.example.animalislands.databinding.ActivityMainBinding;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import android.view.Menu;
-import android.view.MenuItem;
-
-public class MainActivity extends AppCompatActivity {
-
-    private AppBarConfiguration appBarConfiguration;
-    private ActivityMainBinding binding;
-
+public class MainActivity extends AppCompatActivity implements JsonTask.JsonTaskListener {
+private Spinner dropdownMenu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        Button aboutButton = findViewById(R.id.about_button);
+        dropdownMenu = findViewById(R.id.dropdown);
 
-        setSupportActionBar(binding.toolbar);
+        aboutButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+            intent.putExtra("title", "About app");
+            startActivity(intent);
+        });
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        // Recycler widget
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
+
+        String JSON_URL = "https://mobprog.webug.se/json-api?login=f22linbe";
+        new JsonTask(this, this).execute(JSON_URL);
+
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    @Override
+    public void onPostExecute(String json) {
+        Gson gson = new Gson();
+        Island[] islands = gson.fromJson(json, Island[].class);
+        // Arraylists
+        ArrayList<String> detailedItems = new ArrayList<>();
+        ArrayList<RecyclerViewItem> items = new ArrayList<>();
+
+        List<String> countryItems = new ArrayList<>();
+
+        for (Island island : islands) {
+            items.add(new RecyclerViewItem(island.toString()));
+            detailedItems.add(island.getInfo());
+            countryItems.add(island.getLocation());
+        }
+
+        ArrayAdapter<String> dropAdapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item, countryItems);
+        dropdownMenu.setAdapter(dropAdapter);
+
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items, detailedItems, item -> {
+            Intent intent = new Intent(MainActivity.this, DetailedActivity.class);
+            intent.putExtra("itemString", item);
+            startActivity(intent);
+        });
+
+        RecyclerView view = findViewById(R.id.recycler_view);
+        view.setLayoutManager(new LinearLayoutManager(this));
+        view.setAdapter(adapter);
+
+        adapter.notifyDataSetChanged();
+
+        dropdownMenu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedCountry = countryItems.get(position);
+
+                List<RecyclerViewItem> filterCountry = new ArrayList<>();
+
+                for (RecyclerViewItem item : items) {
+                    if(item.getTitle().contains(selectedCountry)) {
+                        filterCountry.add(item);
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
-    }
-}
