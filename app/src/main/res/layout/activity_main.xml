@@ -41,4 +41,15 @@
         app:layout_constraintBottom_toBottomOf="@id/about_button"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
+    <Spinner
+        android:id="@+id/dropdown"
+        android:layout_width="240dp"
+        android:layout_height="35dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.13"
+        app:layout_constraintVertical_bias="0.95" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

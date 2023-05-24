@@ -24,8 +24,12 @@ public class Island {
     public String getInfo() {
         return "ID: " + id + "\nPart of: " + category + "\nSize: " + squarekm + "km²" + "\nPopulation: " + auxdata.getPopulation();
     }
+    public String getLocation() {
+        return location;
+    }
     @NonNull
     public String toString() {
         return name + ", " + location;
     }
+
 }
